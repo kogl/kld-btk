@@ -1,4 +1,4 @@
-import { useState,useContext } from "react";
+import { useState } from "react";
 
 import FormInput from "../form-input/form-input.component";
 
@@ -9,8 +9,8 @@ import {
 
 import { userContext } from "../../context/user.context";
 
-import './sign-up-form.styles.scss'
-import Button from '../button/button.component.jsx'
+import "./sign-up-form.styles.scss";
+import Button from "../button/button.component.jsx";
 
 const defaultFromFields = {
   displayName: "",
@@ -22,12 +22,6 @@ const defaultFromFields = {
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFromFields);
   const { displayName, email, password, repeatPassword } = formFields;
-
-
-  const {setCurrentUser} = useContext(userContext)
-
-
-
 
   const clearFileds = () => {
     setFormFields(defaultFromFields);
@@ -45,8 +39,6 @@ const SignUpForm = () => {
         email,
         password
       );
-
-		setCurrentUser(user)
 
       await createUserDocumentFromAuth(user, { displayName });
       clearFileds();
@@ -68,7 +60,7 @@ const SignUpForm = () => {
 
   return (
     <div className="sign-up-container">
-		<h2>Dont have an account?</h2>
+      <h2>Dont have an account?</h2>
       <h1>Sign up with email and password</h1>
       <form onSubmit={handleSubmit}>
         <FormInput

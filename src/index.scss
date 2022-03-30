@@ -1,5 +1,7 @@
-$background: #006838; 
-$linkColor: white;
+// $background: #006838; 
+$background: #fcfcfc; 
+
+$linkColor: black;
 
 *{
 	box-sizing: border-box;
@@ -12,7 +14,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 20px 40px;
   background-color: $background;
+
 }
 
 code {
