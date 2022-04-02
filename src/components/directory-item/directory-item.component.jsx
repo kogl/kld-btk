@@ -1,18 +1,18 @@
-import "./category-item.syles.scss";
+import "./directory-item.syles.scss";
 
-export const CategoryItem = ({ category }) => {
+export const DirectoryItem = ({ category }) => {
   const { imageUrl,title } = category;
   return (
-    <div className="category-container">
+    <div className="directory-item-container">
       <div
         className="background-image"
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
-      <div className="category-body-container">
+      <div className="body">
         <h2>{title}</h2>
         <p>shop now</p>
       </div>
     </div>
   );
 };
-export default CategoryItem;
+export default DirectoryItem;
