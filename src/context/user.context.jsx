@@ -52,17 +52,17 @@ const value = { currentUser, setCurrentUser };
 
 
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChangedListner((user) => {
-		if(user){
-		 createUserDocumentFromAuth(user);
+//   useEffect(() => {
+//     const unsubscribe = onAuthStateChangedListner((user) => {
+// 		if(user){
+// 		 createUserDocumentFromAuth(user);
 
-		}
-		setCurrentUser(user)
+// 		}
+// 		setCurrentUser(user)
 
-	});
-    return unsubscribe;
-  }, []);
+// 	});
+//     return unsubscribe;
+//   }, []);
   return <userContext.Provider value={value}>{children}</userContext.Provider>;
 
   // <UserProvider>
