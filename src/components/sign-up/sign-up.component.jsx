@@ -1,16 +1,19 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+
 
 import FormInput from "../form-input/form-input.component";
 
-import {
-  createAuthUserWithEmailAndPassword,
-  createUserDocumentFromAuth,
-} from "../../utils/firebase/firebase.utils";
+// import {
+//   createAuthUserWithEmailAndPassword,
+//   createUserDocumentFromAuth,
+// } from "../../utils/firebase/firebase.utils";
 
-import { userContext } from "../../context/user.context";
+// import { userContext } from "../../context/user.context";
 
 import "./sign-up-form.styles.scss";
 import Button from "../button/button.component.jsx";
+import { signUpStart } from "../../store/user/user.action";
 
 const defaultFromFields = {
   displayName: "",
@@ -22,6 +25,7 @@ const defaultFromFields = {
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFromFields);
   const { displayName, email, password, repeatPassword } = formFields;
+  const dispatch = useDispatch()
 
   const clearFileds = () => {
     setFormFields(defaultFromFields);
@@ -35,18 +39,13 @@ const SignUpForm = () => {
       return;
     }
     try {
-      const { user } = await createAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-
-      await createUserDocumentFromAuth(user, { displayName });
+      dispatch(signUpStart(email, password, displayName))
       clearFileds();
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         alert("email already exists");
       } else {
-        console.log("an error has accured ", error);
+        console.log("hata aik ", error);
       }
     }
   };

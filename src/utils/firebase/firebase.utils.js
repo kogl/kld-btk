@@ -8,9 +8,9 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
-	ActionCodeOperation
+	// ActionCodeOperation
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs} from 'firebase/firestore'
+import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs } from 'firebase/firestore'
 
 
 
@@ -49,12 +49,12 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
 		batch.set(docRef, object)
 	})
 
-	await batch.commit(); 
+	await batch.commit();
 	console.log('done');
 }
 
 
-export const getCategoriesandDocuments = async () =>{
+export const getCategoriesandDocuments = async () => {
 	const collectionRef = collection(db, 'categories')
 	const q = query(collectionRef)
 
@@ -94,7 +94,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
 		}
 
 	}
-	return userDocRef;
+	return userSnapShot;
 };
 
 
@@ -115,3 +115,18 @@ export const signOutUser = async () => await signOut(auth)
 
 export const onAuthStateChangedListner = async (callback) =>
 	onAuthStateChanged(auth, callback);
+
+
+
+export const getCurrentUser = () => {
+	return new Promise((resolve, reject) => {
+		const unsubscribe = onAuthStateChanged(
+			auth,
+			(userAuth) => {
+				unsubscribe()
+				resolve(userAuth)
+			},
+			reject
+		);
+	});
+} ;
