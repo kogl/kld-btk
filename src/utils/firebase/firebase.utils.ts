@@ -8,11 +8,13 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
+	NextOrObserver,
+	User
 	// ActionCodeOperation
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs } from 'firebase/firestore'
+import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs, QueryDocumentSnapshot } from 'firebase/firestore'
 
-
+import { Category } from '../../store/categories/category.types';
 
 const firebaseConfig = {
 	apiKey: "AIzaSyDSQHo31GJ_JUZ9hL4xkSZMR5lEZnrEGdI",
@@ -39,7 +41,14 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider)
 
 export const db = getFirestore();
 
-export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+export type ObjectToAdd = {
+	title: string
+}
+
+export const addCollectionAndDocuments = async <T extends ObjectToAdd>(
+	collectionKey: string,
+	objectsToAdd: T[],
+): Promise<void> => {
 	const collectionRef = collection(db, collectionKey)
 
 	const batch = writeBatch(db)
@@ -54,23 +63,28 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
 }
 
 
-export const getCategoriesandDocuments = async () => {
+export const getCategoriesandDocuments = async (): Promise<Category[]> => {
 	const collectionRef = collection(db, 'categories')
 	const q = query(collectionRef)
 
 	const querySnapShot = await getDocs(q)
 	// querySnapShot.docs
-	return querySnapShot.docs.map(docSnapshot => docSnapshot.data())
-	// .reduce((acc, docSnapshot) => {
-	// 	const {title, items} = docSnapshot.data()
-	// 	acc[title.toLowerCase()] = items
-	// 	return acc
-	// },{})
-
-	// return categoryMap
+	return querySnapShot.docs.map(docSnapshot => docSnapshot.data() as Category
+	)
 }
 
-export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
+export type AdditionalInformation = {
+	displayName?: string
+}
+
+export type UserData = {
+	createedAt: Date;
+	displayName: string;
+	email: string
+}
+
+export const createUserDocumentFromAuth = async (userAuth: User, additionalInformation = {} as AdditionalInformation
+): Promise<void | QueryDocumentSnapshot<UserData>> => {
 	if (!userAuth) return;
 	const userDocRef = doc(db, 'users', userAuth.uid);
 
@@ -90,22 +104,22 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
 				...additionalInformation
 			});
 		} catch (error) {
-			console.log('something went wrong horrible wrong', error.messsage);
+			console.log('something went wrong horrible wrong', error);
 		}
 
 	}
-	return userSnapShot;
+	return userSnapShot as QueryDocumentSnapshot<UserData>;
 };
 
 
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
+export const createAuthUserWithEmailAndPassword = async (email: string, password: string) => {
 
 	if (!email || !password) return;
 	return await createUserWithEmailAndPassword(auth, email, password)
 };
 
 
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+export const signInAuthUserWithEmailAndPassword = async (email: string, password: string) => {
 
 	if (!email || !password) return;
 	return await signInWithEmailAndPassword(auth, email, password)
@@ -113,12 +127,12 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 
 export const signOutUser = async () => await signOut(auth)
 
-export const onAuthStateChangedListner = async (callback) =>
+export const onAuthStateChangedListner = async (callback: NextOrObserver<User>) =>
 	onAuthStateChanged(auth, callback);
 
 
 
-export const getCurrentUser = () => {
+export const getCurrentUser = (): Promise <User | null> => {
 	return new Promise((resolve, reject) => {
 		const unsubscribe = onAuthStateChanged(
 			auth,
@@ -129,4 +143,4 @@ export const getCurrentUser = () => {
 			reject
 		);
 	});
-} ;
+};
